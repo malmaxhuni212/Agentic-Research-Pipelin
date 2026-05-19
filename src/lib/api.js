@@ -15,19 +15,22 @@ export const fetchResearch = async (cfg) => {
         messages: [
           {
             role: "system",
-            content: "You are a JSON engine. You must return ONLY a valid JSON object matching this schema: { \"summary\": [\"Paragraph 1 detailed analysis\", \"Paragraph 2 actionable insight\"], \"score\": 89, \"sources\": 34, \"opportunities\": 5, \"quote\": { \"text\": \"A powerful analytical quote\", \"attribution\": \"Matrix Intelligence\" } }"
+            content: "You are an analytical data engine. Output ONLY a valid JSON object. No explanation, no markdown formatting, no backticks. Schema to follow exactly: { \"summary\": [\"Paragraph 1 detailed analysis\", \"Paragraph 2 actionable insight\"], \"score\": 89, \"sources\": 34, \"opportunities\": 5, \"quote\": { \"text\": \"A powerful analytical quote\", \"attribution\": \"Matrix Intelligence\" } }"
           },
           {
             role: "user",
             content: `Perform a deep market analysis for: ${searchQuery}`
           }
-        ],
-        response_format: { type: "json_object" }
+        ]
+        // Removed the strict response_format flag that was crashing Groq
       })
     });
 
     if (!response.ok) {
-      throw new Error(`Groq API Error: ${response.status}`);
+      // If Groq fails now, it will tell us EXACTLY why in the console
+      const errorDetails = await response.json().catch(() => ({}));
+      console.error("Groq Error Details:", errorDetails);
+      throw new Error(`Groq API Error: ${response.status} - ${errorDetails.error?.message || 'Bad Request'}`);
     }
 
     const data = await response.json();
