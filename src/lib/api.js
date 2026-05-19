@@ -14,10 +14,10 @@ export const fetchResearch = async (cfg) => {
         model: "llama3-8b-8192", 
         messages: [
           {
-          {
             role: "system",
-            content: "You are a JSON engine. You must return a valid JSON object matching this schema: { \"summary\": [\"string\", \"string\"], \"score\": 89, \"sources\": 34, \"opportunities\": 5, \"quote\": { \"text\": \"string\", \"attribution\": \"string\" } }"
+            content: "You are a JSON engine. You must return ONLY a valid JSON object matching this schema: { \"summary\": [\"Paragraph 1 detailed analysis\", \"Paragraph 2 actionable insight\"], \"score\": 89, \"sources\": 34, \"opportunities\": 5, \"quote\": { \"text\": \"A powerful analytical quote\", \"attribution\": \"Matrix Intelligence\" } }"
           },
+          {
             role: "user",
             content: `Perform a deep market analysis for: ${searchQuery}`
           }
@@ -37,7 +37,6 @@ export const fetchResearch = async (cfg) => {
     rawContent = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
 
     const llmResult = JSON.parse(rawContent);
-
     const totalSources = llmResult.sources || 28;
     const totalOpps = llmResult.opportunities || 5;
 
